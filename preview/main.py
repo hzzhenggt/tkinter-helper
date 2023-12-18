@@ -8,7 +8,7 @@ from os import path
 import pystray as pystray
 from PIL import Image
 from pystray import MenuItem
-
+import traceback
 # 版本号
 from generate_win import GenerateWin
 
@@ -60,6 +60,7 @@ def preview(tk_json):
         tk_json_obj.build()
     except Exception as e:
         print("执行异常", e)
+        traceback.print_exc()
 
 
 # 解决打包后图片找不到的问题
@@ -97,5 +98,10 @@ if __name__ == "__main__":
     icon = pystray.Icon("name", image, f"Tkinter布局助手\n预览服务已启动\nV{version}", menu)
     # 开新进程启动http服务
     server = multiprocessing.Process(target=start_server)
-    server.start()
-    icon.run()
+    try:
+        server.start()
+        icon.run()
+    except KeyboardInterrupt:
+        on_exit(icon)
+
+
